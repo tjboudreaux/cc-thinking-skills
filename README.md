@@ -145,7 +145,7 @@ Once installed, ask your compatible agent to invoke a skill by name, or use the 
 | skills.sh | [Listing](https://skills.sh/tjboudreaux/cc-thinking-skills) · [refresh issue](https://github.com/vercel-labs/skills/issues/1868) | submitted |
 | GitHub Skills / Awesome Copilot | [v1.0.0 release](https://github.com/tjboudreaux/cc-thinking-skills/releases/tag/v1.0.0) · [Awesome Copilot intake](https://github.com/github/awesome-copilot/issues/2544) | verified (direct install); submitted (Awesome Copilot) |
 | SkillsMP | [Repository listing](https://skillsmp.com/creators/tjboudreaux/cc-thinking-skills) | sync pending |
-| ClawHub | [v1.0.0 source](https://github.com/tjboudreaux/cc-thinking-skills/tree/v1.0.0) · `npx clawhub sync --root ./skills --owner tjboudreaux --all` | authentication required |
+| ClawHub | [Publisher catalog](https://clawhub.ai/tjboudreaux) · [v1.0.0 listing](https://clawhub.ai/tjboudreaux/skills/thinking-first-principles) | verified |
 | officialskills.sh | [officialskills.sh](https://officialskills.sh) · [upstream PR](https://github.com/VoltAgent/awesome-agent-skills/pull/874) | submitted |
 
 ## Available Skills
