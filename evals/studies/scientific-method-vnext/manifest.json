@@ -21,37 +21,37 @@
   "variants": [
     {
       "id": "candidate-01",
-      "path": "evals/studies/scientific-method-vnext/variants/candidate-01/SKILL.md",
+      "path": "evals/studies/scientific-method-vnext/variants/candidate-01/CANDIDATE.md",
       "sha256": "6915b9685c05ce09d533e19f3f3e17b1ce56dffaca00140371bfb79b47b8df1e",
       "bytes": 4614
     },
     {
       "id": "candidate-02",
-      "path": "evals/studies/scientific-method-vnext/variants/candidate-02/SKILL.md",
+      "path": "evals/studies/scientific-method-vnext/variants/candidate-02/CANDIDATE.md",
       "sha256": "83c7664471ef0593d3e4aeb706f0c70f275669f513647e9c0f130a647754bfa3",
       "bytes": 4437
     },
     {
       "id": "candidate-03",
-      "path": "evals/studies/scientific-method-vnext/variants/candidate-03/SKILL.md",
+      "path": "evals/studies/scientific-method-vnext/variants/candidate-03/CANDIDATE.md",
       "sha256": "7605eed80466bc26d541d6e170b042042fde1a571b4943debba1cfb38b178eb5",
       "bytes": 4517
     },
     {
       "id": "candidate-04",
-      "path": "evals/studies/scientific-method-vnext/variants/candidate-04/SKILL.md",
+      "path": "evals/studies/scientific-method-vnext/variants/candidate-04/CANDIDATE.md",
       "sha256": "5eef9e4dd03af5c57f92796c16fd302534a06300435b18e69291444709f9e826",
       "bytes": 4423
     },
     {
       "id": "candidate-05",
-      "path": "evals/studies/scientific-method-vnext/variants/candidate-05/SKILL.md",
+      "path": "evals/studies/scientific-method-vnext/variants/candidate-05/CANDIDATE.md",
       "sha256": "c27814ef432a0db810800f8058e465c83da7019c6fde94301ab34b680761f23d",
       "bytes": 4174
     },
     {
       "id": "candidate-06",
-      "path": "evals/studies/scientific-method-vnext/variants/candidate-06/SKILL.md",
+      "path": "evals/studies/scientific-method-vnext/variants/candidate-06/CANDIDATE.md",
       "sha256": "b186065020e9d4c73e80145892c597c57ebad6ef890ffece5afb703299751c2b",
       "bytes": 3813
     }

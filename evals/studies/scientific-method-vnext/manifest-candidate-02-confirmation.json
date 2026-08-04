@@ -21,7 +21,7 @@
   "variants": [
     {
       "id": "candidate-02",
-      "path": "evals/studies/scientific-method-vnext/variants/candidate-02/SKILL.md",
+      "path": "evals/studies/scientific-method-vnext/variants/candidate-02/CANDIDATE.md",
       "sha256": "83c7664471ef0593d3e4aeb706f0c70f275669f513647e9c0f130a647754bfa3",
       "bytes": 4437
     }

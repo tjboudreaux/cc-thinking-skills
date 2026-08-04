@@ -16,6 +16,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { isDeepStrictEqual } = require('util');
 
 const REPO_ROOT = path.join(__dirname, '..');
 const SKILLS_DIR = path.join(REPO_ROOT, 'skills');
@@ -47,16 +48,151 @@ function listSkillDirs(skillsDir = SKILLS_DIR) {
     .sort();
 }
 
-function parseFrontmatter(content) {
-  const m = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  const fm = {};
-  if (!m) return { frontmatter: fm, body: content, has_frontmatter: false };
-  for (const line of m[1].split(/\r?\n/)) {
-    const kv = line.match(/^(\w[\w-]*):\s*(.*)$/);
-    if (kv) fm[kv[1]] = kv[2].trim();
+function listUnexpectedSkillFiles(repoRoot = REPO_ROOT) {
+  const skippedDirectories = new Set([
+    '.git',
+    '.claude',
+    'backups',
+    'evals/checkouts',
+    'node_modules',
+  ]);
+  const unexpected = [];
+
+  function visit(directory, relativeDirectory = '') {
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+      const relativePath = relativeDirectory
+        ? `${relativeDirectory}/${entry.name}`
+        : entry.name;
+      if (entry.isDirectory()) {
+        if (!skippedDirectories.has(relativePath)) {
+          visit(path.join(directory, entry.name), relativePath);
+        }
+        continue;
+      }
+      if (!entry.isFile() || entry.name !== 'SKILL.md') continue;
+      if (!/^skills\/thinking-[^/]+\/SKILL\.md$/.test(relativePath)) {
+        unexpected.push(relativePath);
+      }
+    }
   }
-  const body = content.slice(m[0].length);
-  return { frontmatter: fm, body, has_frontmatter: true };
+
+  visit(repoRoot);
+  return unexpected.sort();
+}
+
+function validatePluginManifests(repoRoot = REPO_ROOT) {
+  const manifestPaths = [
+    '.claude-plugin/plugin.json',
+    '.github/plugin/plugin.json',
+  ];
+  const fields = [
+    'name',
+    'description',
+    'version',
+    'author',
+    'homepage',
+    'repository',
+    'license',
+    'keywords',
+    'skills',
+  ];
+  const errors = [];
+  const manifests = [];
+
+  for (const relativePath of manifestPaths) {
+    const absolutePath = path.join(repoRoot, relativePath);
+    if (!fs.existsSync(absolutePath)) {
+      errors.push(`manifest missing: ${relativePath}`);
+      continue;
+    }
+    try {
+      const manifest = JSON.parse(fs.readFileSync(absolutePath, 'utf8'));
+      manifests.push({ relativePath, manifest });
+      if (!isDeepStrictEqual(manifest.skills, ['skills/'])) {
+        errors.push(`manifest skills must equal ["skills/"]: ${relativePath}`);
+      }
+    } catch (error) {
+      errors.push(`manifest invalid JSON: ${relativePath}: ${error.message}`);
+    }
+  }
+
+  if (manifests.length === manifestPaths.length) {
+    const [first, second] = manifests;
+    for (const field of fields) {
+      if (!isDeepStrictEqual(first.manifest[field], second.manifest[field])) {
+        errors.push(`manifest field mismatch: ${field}`);
+      }
+    }
+  }
+
+  return errors;
+}
+
+function parseFrontmatter(content) {
+  const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  const frontmatter = {};
+  const errors = [];
+  if (!match) {
+    return { frontmatter, body: content, has_frontmatter: false, errors };
+  }
+
+  const lines = match[1].split(/\r?\n/);
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
+    const lineNumber = index + 2;
+    if (/^\s*(?:#.*)?$/.test(line)) continue;
+
+    const keyValue = line.match(/^(\w[\w-]*):\s*(.*)$/);
+    if (!keyValue || keyValue[2].trim().length === 0) {
+      errors.push(`frontmatter line ${lineNumber}: expected key: scalar`);
+      continue;
+    }
+
+    const key = keyValue[1];
+    if (Object.prototype.hasOwnProperty.call(frontmatter, key)) {
+      errors.push(`frontmatter line ${lineNumber}: duplicate key "${key}"`);
+      continue;
+    }
+
+    const scalar = keyValue[2].trim();
+    let value;
+    if (scalar.startsWith("'")) {
+      if (!scalar.endsWith("'") || scalar.length < 2) {
+        errors.push(`frontmatter line ${lineNumber}: unclosed single-quoted scalar`);
+        continue;
+      }
+      const inner = scalar.slice(1, -1);
+      if (/(^|[^'])'(?:[^']|$)/.test(inner)) {
+        errors.push(`frontmatter line ${lineNumber}: unclosed single-quoted scalar`);
+        continue;
+      }
+      value = inner.replace(/''/g, "'");
+    } else if (scalar.startsWith('"')) {
+      try {
+        value = JSON.parse(scalar);
+        if (typeof value !== 'string') throw new TypeError('not a string');
+      } catch (_) {
+        errors.push(`frontmatter line ${lineNumber}: invalid double-quoted scalar`);
+        continue;
+      }
+    } else {
+      const ambiguousToken = [': ', ' #'].find(token => scalar.includes(token));
+      if (ambiguousToken) {
+        errors.push(`frontmatter line ${lineNumber}: ambiguous bare scalar contains "${ambiguousToken}"`);
+        continue;
+      }
+      value = scalar;
+    }
+
+    if (value.length === 0) {
+      errors.push(`frontmatter line ${lineNumber}: expected key: scalar`);
+      continue;
+    }
+    frontmatter[key] = value;
+  }
+
+  const body = content.slice(match[0].length);
+  return { frontmatter, body, has_frontmatter: true, errors };
 }
 
 function countWords(text) {
@@ -102,7 +238,7 @@ function validateSkillContent(content, opts = {}) {
   const requireDisableModelInvocation = opts.requireDisableModelInvocation === true;
   const forbiddenSkillIds = opts.forbiddenSkillIds || [];
 
-  const { frontmatter, has_frontmatter } = parseFrontmatter(content);
+  const { frontmatter, has_frontmatter, errors: frontmatterErrors } = parseFrontmatter(content);
   const words = countWords(content);
   const description = frontmatter.description || '';
   const descriptionLen = description.length;
@@ -119,11 +255,14 @@ function validateSkillContent(content, opts = {}) {
   checks.push({
     name: 'YAML Frontmatter',
     pass: has_frontmatter &&
+      frontmatterErrors.length === 0 &&
       frontmatter.name === skillName &&
       Boolean(frontmatter.description),
-    detail: has_frontmatter
-      ? `name=${frontmatter.name || 'missing'}`
-      : 'missing frontmatter',
+    detail: frontmatterErrors.length > 0
+      ? frontmatterErrors.join('; ')
+      : has_frontmatter
+        ? `name=${frontmatter.name || 'missing'}`
+        : 'missing frontmatter',
   });
   checks.push({
     name: 'Description Length',
@@ -249,7 +388,8 @@ function loadCatalogExpectations(registryPath) {
  * Validate all skills under skillsDir. Pure: no file writes.
  */
 function validateAllSkills(opts = {}) {
-  const skillsDir = opts.skillsDir || SKILLS_DIR;
+  const repoRoot = opts.repoRoot || REPO_ROOT;
+  const skillsDir = opts.skillsDir || path.join(repoRoot, 'skills');
   const catalog = loadCatalogExpectations(opts.registryPath);
   const dirs = listSkillDirs(skillsDir);
   const results = [];
@@ -279,6 +419,10 @@ function validateAllSkills(opts = {}) {
   if (catalog.registryValidation && !catalog.registryValidation.ok) {
     for (const e of catalog.registryValidation.errors) errors.push(`registry: ${e}`);
   }
+  for (const skillPath of listUnexpectedSkillFiles(repoRoot)) {
+    errors.push(`unexpected SKILL.md: ${skillPath}`);
+  }
+  errors.push(...validatePluginManifests(repoRoot));
 
   const failedSkills = results.filter(r => !r.pass);
   return {
@@ -344,6 +488,8 @@ module.exports = {
   DEFAULT_REQUIRED_SECTIONS,
   DEFAULT_DESCRIPTION_MAX,
   listSkillDirs,
+  listUnexpectedSkillFiles,
+  validatePluginManifests,
   parseFrontmatter,
   countWords,
   hasSection,

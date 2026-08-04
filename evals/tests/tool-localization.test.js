@@ -170,11 +170,11 @@ test('tool localization variants each add exactly one isolated mechanism', () =>
   const current = fs.readFileSync(path.join(root, 'skills/thinking-scientific-method/SKILL.md'), 'utf8');
   const clue = fs.readFileSync(path.join(
     root,
-    'evals/studies/scientific-method-vnext/variants/candidate-clue-first/SKILL.md',
+    'evals/studies/scientific-method-vnext/variants/candidate-clue-first/CANDIDATE.md',
   ), 'utf8');
   const moduleRole = fs.readFileSync(path.join(
     root,
-    'evals/studies/scientific-method-vnext/variants/candidate-module-role/SKILL.md',
+    'evals/studies/scientific-method-vnext/variants/candidate-module-role/CANDIDATE.md',
   ), 'utf8');
   const clueMechanism = ' Before proposing hypotheses, extract exact symbols, exception text, behavioral boundaries, lifecycle phases, and call-direction clues from the issue; spend the first observation on the rarest clue that can map directly to an owner.';
   const moduleMechanism = ' Before ranking hypotheses, map each plausible file to its runtime responsibility; favor the implementation owner whose module role owns the failed behavior over a facade, caller, wrapper, test, or compatibility layer unless direct evidence points elsewhere.';

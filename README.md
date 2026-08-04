@@ -1,10 +1,11 @@
 # Claude Code Thinking Skills
 
-> **28 Mental Models and Critical-Thinking Frameworks for Claude Code**
+> **28 Mental Models and Critical-Thinking Frameworks for Claude Code, GitHub Copilot, Codex, Cursor, and other Agent Skills-compatible tools**
 
-**Claude Code Thinking Skills is a collection of 28 mental-model and critical-thinking frameworks for [Claude Code](https://claude.ai/claude-code) that give Anthropic's AI coding agent structured ways to reason about decisions, debugging, systems, risk, and strategy.** Each skill packages a proven thinking framework — from first-principles reasoning to the theory of constraints — into a Claude Code skill you can invoke by name, and the whole collection is backed by a transparent, replication-gated evaluation pipeline.
+**Claude Code Thinking Skills is a portable [Agent Skills](https://agentskills.io) catalog of 28 mental-model and critical-thinking frameworks for decisions, debugging, systems, risk, and strategy.** It originated for Claude Code and now works across GitHub Copilot, Codex, Cursor, and other compatible agents. Each skill packages a proven thinking framework — from first-principles reasoning to the theory of constraints — into a skill an agent can invoke by name, and the whole collection is backed by a transparent, replication-gated evaluation pipeline.
 
 [![Claude Code Skills](https://img.shields.io/badge/Claude_Code-Skills-7C3AED?style=flat&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMiA3TDEyIDEyTDIyIDdMMTIgMloiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNMiAxN0wxMiAyMkwyMiAxNyIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxwYXRoIGQ9Ik0yIDEyTDEyIDE3TDIyIDEyIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+)](https://github.com/tjboudreaux/cc-thinking-skills)
+[![Agent Skills Compatible](https://img.shields.io/badge/Agent_Skills-compatible-0A7EA4?style=flat)](https://agentskills.io)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Skills Count](https://img.shields.io/badge/Skills-28-blue)](https://github.com/tjboudreaux/cc-thinking-skills)
 
@@ -14,9 +15,9 @@
 
 | | |
 |---|---|
-| **What it is** | A library of 28 mental-model and critical-thinking skills for Claude Code. |
-| **Who it's for** | Engineers, founders, and analysts who want Claude Code to reason with structured frameworks instead of ad-hoc heuristics. |
-| **How to start** | Install via the plugin marketplace, then invoke `thinking-model-router` to be routed to the right skill. |
+| **What it is** | A portable Agent Skills library of 28 mental-model and critical-thinking frameworks. |
+| **Who it's for** | Engineers, founders, and analysts who want compatible AI agents to reason with structured frameworks instead of ad-hoc heuristics. |
+| **How to start** | Run `npx skills add tjboudreaux/cc-thinking-skills`, then invoke `thinking-model-router` to be routed to the right skill. |
 | **License** | MIT — free to use, modify, and distribute. |
 | **Evidence** | Every skill ran through a replication-gated [Elevate-or-Kill evaluation pipeline](analysis/ELEVATE-OR-KILL-SCORECARD.md). The honest headline: **zero skills currently hold a robust, replicated ELEVATE verdict** — and we publish that result rather than hide it. |
 | **Entry point** | `thinking-model-router` → **START HERE** |
@@ -48,15 +49,39 @@ That rigor is the point. These skills are useful structured-reasoning scaffolds 
 - **28 Thinking Frameworks** — A curated library of mental models for decision-making, debugging, and strategy.
 - **Eval-Backed and Honest** — Built and tested with a rigorous, replication-gated evaluation pipeline; see the [Elevate-or-Kill Scorecard](analysis/ELEVATE-OR-KILL-SCORECARD.md).
 - **Battle-Tested Foundations** — Grounded in frameworks from cognitive science, systems thinking, and strategic analysis (Munger, Meadows, Kahneman, Goldratt, Altshuller/TRIZ, Boyd/OODA).
-- **Claude Code Native** — Designed specifically for Claude Code's skill system and invocation model.
+- **Claude Code Native, Agent Skills Portable** — First-class Claude Code marketplace support plus the shared Agent Skills format used by GitHub Copilot, Codex, Cursor, and other compatible tools.
 - **Quality Scripts** — Tooling to validate, score, and improve skill quality.
-- **Zero Configuration** — Install and invoke skills by name; no setup required.
+- **Zero Configuration** — Install through a supported client and invoke skills by name; no framework setup required.
 
 ## Quick Start
 
-### Installation via Plugin Marketplace (Recommended)
+### skills.sh / `npx skills`
 
-Install directly in Claude Code using the plugin system:
+Use the skills.sh CLI to discover the catalog and choose skills or target agents interactively:
+
+```bash
+npx skills add tjboudreaux/cc-thinking-skills
+```
+
+For a non-interactive all-skill, all-agent installation:
+
+```bash
+npx skills add tjboudreaux/cc-thinking-skills --all
+```
+
+### GitHub CLI
+
+Install all 28 skills from the immutable release:
+
+```bash
+gh skill install tjboudreaux/cc-thinking-skills --all --pin v1.0.0
+```
+
+The pin makes the source reproducible. Without `--pin`, GitHub Skills resolves the latest release before falling back to default-branch `HEAD`.
+
+### Claude Code Marketplace
+
+Claude Code users can install the native plugin wrapper:
 
 ```bash
 # Add the marketplace
@@ -66,24 +91,35 @@ Install directly in Claude Code using the plugin system:
 /plugin install thinking-skills@thinking-skills-marketplace
 ```
 
-### Alternative: Manual Installation
+### Clone and Copy Fallback
 
-Clone and copy skills directly:
+Clone the repository once:
 
 ```bash
-# Clone the repository
 git clone https://github.com/tjboudreaux/cc-thinking-skills.git
-
-# Copy skills to your global Claude Code config
-cp -r cc-thinking-skills/skills/* ~/.claude/skills/
-
-# Or copy to a specific project
-cp -r cc-thinking-skills/skills/* /path/to/your/project/.claude/skills/
 ```
 
-### Development: Load as Local Plugin
+For agents using the shared project-level Agent Skills location:
 
-For testing or development:
+```bash
+mkdir -p /path/to/project/.agents/skills
+cp -R cc-thinking-skills/skills/* /path/to/project/.agents/skills/
+```
+
+For Claude Code, copy to the global or project-specific Claude skills directory:
+
+```bash
+mkdir -p ~/.claude/skills /path/to/project/.claude/skills
+cp -R cc-thinking-skills/skills/* ~/.claude/skills/
+# Or:
+cp -R cc-thinking-skills/skills/* /path/to/project/.claude/skills/
+```
+
+Other clients should use the skills directory documented by that client.
+
+### Development: Load as a Local Claude Code Plugin
+
+For Claude Code testing or development:
 
 ```bash
 claude --plugin-dir ./cc-thinking-skills
@@ -91,7 +127,7 @@ claude --plugin-dir ./cc-thinking-skills
 
 ### Usage
 
-Once installed, invoke any skill by name in Claude Code. **If you're not sure which framework fits, start with `thinking-model-router`** and let it route you:
+Once installed, ask your compatible agent to invoke a skill by name, or use the client's documented skill command. **If you're not sure which framework fits, start with `thinking-model-router`** and let it route you:
 
 ```
 > Use the thinking-model-router to pick the right framework for this problem
@@ -283,15 +319,15 @@ Attack your own plans before adversaries do. The best defense is knowing your we
 ## FAQ
 
 ### What are Claude Code thinking skills?
-Claude Code thinking skills are 28 reusable mental-model and critical-thinking frameworks packaged as Claude Code skills. Each one gives the AI agent a structured method — such as first-principles reasoning, probabilistic updating, or the theory of constraints — for analyzing a specific kind of problem. You invoke them by name to steer how Claude approaches decisions, debugging, and strategy.
+Claude Code Thinking Skills is a portable catalog of 28 reusable mental-model and critical-thinking frameworks in the Agent Skills format. Each one gives a compatible AI agent a structured method — such as first-principles reasoning, probabilistic updating, or the theory of constraints — for analyzing a specific kind of problem. You can invoke them by name in Claude Code, GitHub Copilot, Codex, Cursor, and other Agent Skills-compatible tools.
 
-### How do I install Claude Code thinking skills?
-The recommended path is the plugin marketplace: run `/plugin marketplace add tjboudreaux/cc-thinking-skills`, then `/plugin install thinking-skills@thinking-skills-marketplace`. You can also clone the repo and copy `skills/*` into `~/.claude/skills/` (global) or your project's `.claude/skills/`, or load it locally with `claude --plugin-dir ./cc-thinking-skills`.
+### How do I install the thinking skills?
+Use `npx skills add tjboudreaux/cc-thinking-skills` for interactive installation, or add `--all` for a non-interactive all-skill, all-agent install. GitHub Skills users can run `gh skill install tjboudreaux/cc-thinking-skills --all --pin v1.0.0`; an unpinned install resolves the latest release before default-branch `HEAD`. Claude Code users can instead use the native plugin marketplace commands above. The clone/copy fallback supports `.agents/skills/`, `.claude/skills/`, or another client-documented skills directory.
 
 ### Which thinking skill should I start with?
 Start with `thinking-model-router`. It's the meta-skill entry point that reads your problem and routes you to the most relevant framework, so you don't need to memorize all 28. If you already know your need — for example debugging, risk, or prioritization — you can invoke the specific skill directly.
 
-### Do these skills actually improve Claude's accuracy?
+### Do these skills actually improve model accuracy?
 No skill is currently proven to improve accuracy. Every skill was run through a replication-gated evaluation, and **zero skills hold a robust, replicated ELEVATE verdict.** The closest candidate, `thinking-scientific-method`, scored +5.3pp (p=0.061, n=150) on its fresh primary run — directional but short of the p<0.05 gate — with a significant +8.0pp (p=0.001) replication; because a significant replication can't rescue a primary that fails the gate, its verdict is DIRECTIONAL-NOT-REPLICATED. Treat the skills as solid structured-reasoning scaffolds, not a guaranteed accuracy boost.
 
 ### What is the model-router skill?
@@ -314,7 +350,7 @@ We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 ```yaml
 ---
 name: thinking-your-skill-name
-description: Brief description under 200 chars (used by Claude Code for skill matching)
+description: Brief description under 200 chars (used by compatible agents for skill matching)
 ---
 ```
 3. Write comprehensive documentation with:
@@ -333,10 +369,11 @@ node scripts/validate-skills.js
 
 ## Keywords
 
-`claude-code` `claude` `anthropic` `ai` `skills` `claude-code-skills` `mental-models` `critical-thinking` `decision-making` `problem-solving` `ai-reasoning` `systems-thinking` `first-principles` `probabilistic-reasoning` `uncertainty-estimation` `cognitive-bias` `strategic-thinking` `frameworks` `triz` `ooda` `pre-mortem` `socratic-method` `theory-of-constraints` `cynefin` `jobs-to-be-done` `red-team`
+`agent-skills` `skills-sh` `github-copilot` `codex` `cursor` `claude-code` `claude` `anthropic` `ai` `skills` `claude-code-skills` `mental-models` `critical-thinking` `decision-making` `problem-solving` `ai-reasoning` `systems-thinking` `first-principles` `probabilistic-reasoning` `uncertainty-estimation` `cognitive-bias` `strategic-thinking` `frameworks` `triz` `ooda` `pre-mortem` `socratic-method` `theory-of-constraints` `cynefin` `jobs-to-be-done` `red-team`
 
 ## Related Resources
 
+- [Agent Skills specification](https://agentskills.io)
 - [Claude Code Documentation](https://docs.anthropic.com/claude-code)
 - [Charlie Munger's Mental Models](https://fs.blog/mental-models/)
 - [Thinking in Systems - Donella Meadows](https://www.chelseagreen.com/product/thinking-in-systems/)
@@ -353,4 +390,4 @@ Created by [TJ Boudreaux](https://github.com/tjboudreaux)
 
 ---
 
-**Found this useful?** Give it a star and share with others who could benefit from better thinking frameworks in Claude Code.
+**Found this useful?** Give it a star and share it with others who could benefit from better thinking frameworks in their AI agents.

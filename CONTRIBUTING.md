@@ -1,12 +1,12 @@
 # Contributing to Claude Code Thinking Skills
 
-Thank you for your interest in contributing to this collection of thinking skills for Claude Code!
+Thank you for your interest in contributing to this portable collection of thinking skills for compatible AI coding agents!
 
 ## How to Contribute
 
 ### Adding New Thinking Skills
 
-We welcome new mental models and thinking frameworks that would benefit Claude Code users. Here's how to add one:
+We welcome new mental models and thinking frameworks that would benefit users of Agent Skills-compatible tools. Here's how to add one:
 
 #### 1. Choose a Valid Mental Model
 
@@ -34,7 +34,7 @@ Follow this template:
 ````markdown
 ---
 name: thinking-your-skill-name
-description: Brief description (1-2 sentences) that helps Claude Code understand when to invoke this skill.
+description: Brief description (1-2 sentences) that helps compatible agents understand when to invoke this skill.
 ---
 
 # Skill Name
@@ -123,10 +123,11 @@ If you find problems with existing skills:
 
 ### YAML Frontmatter
 
-The `description` field is critical - it helps Claude Code understand when to invoke the skill:
+The `description` field is critical — compatible agents use it to decide when to invoke the skill:
 - Keep under 200 characters
 - Focus on the use case, not the theory
 - Include keywords that users might mention
+- Quote descriptions containing YAML-significant `: ` or ` #`
 
 ### Eval Expectations
 
@@ -155,7 +156,7 @@ Do not claim a skill is "proven" or "firm" from pre-edit results. Re-run after e
 4. **Push** to your fork: `git push origin add-thinking-skillname`
 5. **Open** a Pull Request with:
    - Clear description of the skill/change
-   - Why it's valuable for Claude Code users
+   - Why it's valuable for users of compatible agents
    - Any references to source material
 
 ## Code of Conduct
@@ -170,4 +171,4 @@ Open an issue with the "question" label if you're unsure about anything.
 
 ---
 
-Thank you for helping make Claude Code smarter!
+Thank you for helping AI agents think more clearly!

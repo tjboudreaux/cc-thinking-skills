@@ -12,6 +12,8 @@ const {
   DEFAULT_REQUIRED_SECTIONS,
   parseFrontmatter,
   listSkillDirs,
+  listUnexpectedSkillFiles,
+  validatePluginManifests,
 } = require('../../scripts/validate-skills');
 const {
   validateDatasetSplits,
@@ -131,6 +133,71 @@ test('parseFrontmatter returns identical fields for LF and CRLF', () => {
   assert.equal(crlfResult.pass, true, JSON.stringify(crlfResult.failed));
 });
 
+test('parseFrontmatter decodes quoted scalars and preserves valid bare scalars', () => {
+  const content = `---
+# full-line comments are ignored
+
+name: thinking-example
+description: 'It''s useful: when reality is expensive.'
+double-quoted: "line\\nvalue"
+disable-model-invocation: true
+---
+body
+`;
+  const parsed = parseFrontmatter(content);
+  assert.equal(parsed.has_frontmatter, true);
+  assert.deepEqual(parsed.errors, []);
+  assert.deepEqual(parsed.frontmatter, {
+    name: 'thinking-example',
+    description: "It's useful: when reality is expensive.",
+    'double-quoted': 'line\nvalue',
+    'disable-model-invocation': 'true',
+  });
+
+  const thoughtExperiment = fs.readFileSync(
+    path.join(REPO_ROOT, 'skills', 'thinking-thought-experiment', 'SKILL.md'),
+    'utf8',
+  );
+  const thoughtParsed = parseFrontmatter(thoughtExperiment);
+  assert.deepEqual(thoughtParsed.errors, []);
+  assert.match(thoughtParsed.frontmatter.description, /counterfactual: isolate one variable/);
+});
+
+test('parseFrontmatter reports every malformed flat-scalar class with LF/CRLF parity', () => {
+  const cases = [
+    ['not a mapping', 'frontmatter line 2: expected key: scalar'],
+    ['name:', 'frontmatter line 2: expected key: scalar'],
+    ['name: first\nname: second', 'frontmatter line 3: duplicate key "name"'],
+    ["name: 'unclosed", 'frontmatter line 2: unclosed single-quoted scalar'],
+    ['name: "invalid\\q"', 'frontmatter line 2: invalid double-quoted scalar'],
+    ['name: ambiguous: value', 'frontmatter line 2: ambiguous bare scalar contains ": "'],
+    ['name: ambiguous # value', 'frontmatter line 2: ambiguous bare scalar contains " #"'],
+  ];
+
+  for (const [frontmatter, expectedError] of cases) {
+    const lf = `---\n${frontmatter}\n---\nbody\n`;
+    const crlf = lf.replace(/\n/g, '\r\n');
+    assert.deepEqual(parseFrontmatter(lf).errors, [expectedError]);
+    assert.deepEqual(parseFrontmatter(crlf).errors, [expectedError]);
+  }
+});
+
+test('validateSkillContent surfaces parser errors in YAML Frontmatter detail', () => {
+  const result = validateSkillContent(
+    LEAN_BODY.replace(
+      'description: Short situation-named description under two hundred characters.',
+      'description: ambiguous: bare scalar',
+    ),
+    { name: 'thinking-example', maxWords: 100, enforceBudget: true },
+  );
+  const yamlCheck = result.checks.find(check => check.name === 'YAML Frontmatter');
+  assert.equal(yamlCheck.pass, false);
+  assert.equal(
+    yamlCheck.detail,
+    'frontmatter line 3: ambiguous bare scalar contains ": "',
+  );
+});
+
 test('router emits invocable thinking-skills IDs; NONE means no invocation', () => {
   const routerPath = path.join(REPO_ROOT, 'skills', 'thinking-model-router', 'SKILL.md');
   const content = fs.readFileSync(routerPath, 'utf8');
@@ -204,6 +271,97 @@ test('current lean catalog satisfies every structural contract', () => {
     assert.equal(result.frontmatter['disable-model-invocation'], 'true', result.name);
     assert.deepEqual(result.forbidden_skill_refs, [], result.name);
   }
+});
+
+test('catalog boundary rejects stray SKILL.md files but ignores local trees and candidates', () => {
+  const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'skill-catalog-'));
+  const writeFixture = (relativePath) => {
+    const absolutePath = path.join(repoRoot, relativePath);
+    fs.mkdirSync(path.dirname(absolutePath), { recursive: true });
+    fs.writeFileSync(absolutePath, 'fixture\n');
+  };
+
+  writeFixture('evals/study/SKILL.md');
+  writeFixture('evals/study/CANDIDATE.md');
+  for (const ignoredPath of [
+    '.git/cache/SKILL.md',
+    '.claude/cache/SKILL.md',
+    'backups/cache/SKILL.md',
+    'evals/checkouts/cache/SKILL.md',
+    'node_modules/package/SKILL.md',
+  ]) {
+    writeFixture(ignoredPath);
+  }
+
+  assert.deepEqual(listUnexpectedSkillFiles(repoRoot), ['evals/study/SKILL.md']);
+  const report = validateAllSkills({
+    repoRoot,
+    skillsDir: path.join(REPO_ROOT, 'skills'),
+  });
+  assert.ok(report.catalog_errors.includes('unexpected SKILL.md: evals/study/SKILL.md'));
+  assert.throws(
+    () => listUnexpectedSkillFiles(path.join(repoRoot, 'missing')),
+    /ENOENT/,
+  );
+});
+
+function createManifestRepo() {
+  const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'plugin-manifests-'));
+  const manifest = fs.readFileSync(
+    path.join(REPO_ROOT, '.claude-plugin', 'plugin.json'),
+    'utf8',
+  );
+  for (const relativePath of [
+    '.claude-plugin/plugin.json',
+    '.github/plugin/plugin.json',
+  ]) {
+    const absolutePath = path.join(repoRoot, relativePath);
+    fs.mkdirSync(path.dirname(absolutePath), { recursive: true });
+    fs.writeFileSync(absolutePath, manifest);
+  }
+  return repoRoot;
+}
+
+test('plugin manifests expose the same portable skills catalog', () => {
+  assert.deepEqual(validatePluginManifests(createManifestRepo()), []);
+});
+
+test('plugin manifest validation rejects metadata drift', () => {
+  const repoRoot = createManifestRepo();
+  const githubPath = path.join(repoRoot, '.github', 'plugin', 'plugin.json');
+  const githubManifest = JSON.parse(fs.readFileSync(githubPath, 'utf8'));
+  githubManifest.version = '9.9.9';
+  fs.writeFileSync(githubPath, `${JSON.stringify(githubManifest, null, 2)}\n`);
+  assert.deepEqual(
+    validatePluginManifests(repoRoot),
+    ['manifest field mismatch: version'],
+  );
+});
+
+test('plugin manifest validation reports malformed JSON', () => {
+  const repoRoot = createManifestRepo();
+  fs.writeFileSync(
+    path.join(repoRoot, '.github', 'plugin', 'plugin.json'),
+    '{ invalid',
+  );
+  const errors = validatePluginManifests(repoRoot);
+  assert.equal(errors.length, 1);
+  assert.match(
+    errors[0],
+    /^manifest invalid JSON: \.github\/plugin\/plugin\.json:/,
+  );
+});
+
+test('plugin manifest validation rejects a noncanonical skills path', () => {
+  const repoRoot = createManifestRepo();
+  const githubPath = path.join(repoRoot, '.github', 'plugin', 'plugin.json');
+  const githubManifest = JSON.parse(fs.readFileSync(githubPath, 'utf8'));
+  githubManifest.skills = ['./skills'];
+  fs.writeFileSync(githubPath, `${JSON.stringify(githubManifest, null, 2)}\n`);
+  assert.deepEqual(validatePluginManifests(repoRoot), [
+    'manifest skills must equal ["skills/"]: .github/plugin/plugin.json',
+    'manifest field mismatch: skills',
+  ]);
 });
 
 test('validate-skills does not write quality-report.json', () => {

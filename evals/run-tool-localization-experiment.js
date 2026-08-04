@@ -38,8 +38,8 @@ function stageCaps(manifest, stage) {
 function loadArmDefinitions(armIds) {
   const files = {
     current: 'skills/thinking-scientific-method/SKILL.md',
-    'clue-first': 'evals/studies/scientific-method-vnext/variants/candidate-clue-first/SKILL.md',
-    'module-role': 'evals/studies/scientific-method-vnext/variants/candidate-module-role/SKILL.md',
+    'clue-first': 'evals/studies/scientific-method-vnext/variants/candidate-clue-first/CANDIDATE.md',
+    'module-role': 'evals/studies/scientific-method-vnext/variants/candidate-module-role/CANDIDATE.md',
   };
   return armIds.map((id) => ({
     id,
