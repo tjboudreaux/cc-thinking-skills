@@ -56,6 +56,8 @@ That rigor is the point. These skills are useful structured-reasoning scaffolds 
 
 ## Quick Start
 
+Choose the service or client you already use. Directory-only surfaces point back to the same canonical release; they do not maintain separate copies.
+
 ### skills.sh / `npx skills`
 
 Use the skills.sh CLI to discover the catalog and choose skills or target agents interactively:
@@ -80,6 +82,22 @@ gh skill install tjboudreaux/cc-thinking-skills --all --pin v1.0.0
 
 The pin makes the source reproducible. Without `--pin`, GitHub Skills resolves the latest release before falling back to default-branch `HEAD`.
 
+### ClawHub / OpenClaw
+
+ClawHub publishes each skill separately. Install the recommended model router with OpenClaw:
+
+```bash
+openclaw skills install @tjboudreaux/thinking-model-router
+```
+
+Or use the standalone ClawHub CLI:
+
+```bash
+npx clawhub install @tjboudreaux/thinking-model-router
+```
+
+Browse the [full 28-skill ClawHub catalog](https://clawhub.ai/tjboudreaux) and replace `thinking-model-router` with any listed skill slug.
+
 ### Claude Code Marketplace
 
 Claude Code users can install the native plugin wrapper:
@@ -91,6 +109,31 @@ Claude Code users can install the native plugin wrapper:
 # Install the plugin
 /plugin install thinking-skills@thinking-skills-marketplace
 ```
+
+### GitHub Copilot
+
+Use the pinned GitHub Skills command above for an installed catalog that Copilot can consume. The [Awesome Copilot submission](https://github.com/github/awesome-copilot/issues/2544) has passed automated intake but is still awaiting maintainer review, so it does not yet have a marketplace install command.
+
+To load the released plugin wrapper directly in Copilot CLI:
+
+```bash
+git clone --branch v1.0.0 --depth 1 https://github.com/tjboudreaux/cc-thinking-skills.git
+copilot --plugin-dir ./cc-thinking-skills
+```
+
+### SkillsMP
+
+[SkillsMP](https://skillsmp.com/creators/tjboudreaux/cc-thinking-skills) is a discovery directory. From an individual skill page, install that skill through the shared Skills CLI:
+
+```bash
+npx skills add https://github.com/tjboudreaux/cc-thinking-skills --skill thinking-model-router
+```
+
+Replace `thinking-model-router` with the skill slug you selected, or omit `--skill` to choose interactively.
+
+### officialskills.sh
+
+The [officialskills.sh submission](https://github.com/VoltAgent/awesome-agent-skills/pull/874) is still under review. There is no officialskills.sh install command until that listing is accepted; use skills.sh, GitHub Skills, ClawHub, or the source-copy fallback in the meantime.
 
 ### Clone and Copy Fallback
 
