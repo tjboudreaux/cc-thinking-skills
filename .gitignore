@@ -2,6 +2,9 @@
 .DS_Store
 # session / local
 .claude/
+# registry build artifacts
+.opencode-registry/dist/
+_site/
 # transient run logs
 *.log
 # local backups of global Claude state; do not commit

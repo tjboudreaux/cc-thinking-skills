@@ -1,0 +1,80 @@
+name: Build and Deploy OCX Registry
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'skills/**'
+      - '.opencode-registry/**'
+      - '.github/workflows/build-registry.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'skills/**'
+      - '.opencode-registry/**'
+      - '.github/workflows/build-registry.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install OCX CLI
+        run: |
+          curl -fsSL https://ocx.kdco.dev/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Verify OCX version
+        run: ocx --version
+
+      - name: Build OCX registry
+        run: ./.opencode-registry/build.sh .opencode-registry/dist
+
+      - name: Prepare Pages directory
+        run: |
+          mkdir -p _site/registry
+          cp -R .opencode-registry/dist/* _site/registry/
+          # Optional: add index.html redirect at root
+          cat <<'EOF' > _site/index.html
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <title>Claude Code Thinking Skills - OCX Registry</title>
+              <meta http-equiv="refresh" content="0; url=https://github.com/tjboudreaux/cc-thinking-skills">
+            </head>
+            <body>
+              <p>Redirecting to <a href="https://github.com/tjboudreaux/cc-thinking-skills">Claude Code Thinking Skills</a>...</p>
+            </body>
+          </html>
+          EOF
+
+      - name: Upload Pages artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

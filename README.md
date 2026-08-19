@@ -37,6 +37,26 @@ npx skills add tjboudreaux/cc-thinking-skills --all
 /plugin install thinking-skills@thinking-skills-marketplace
 ```
 
+### OpenCode (via OCX)
+
+Add the registry:
+
+```bash
+ocx registry add https://tjboudreaux.github.io/cc-thinking-skills/registry --name thinking-skills
+```
+
+Install a specific skill:
+
+```bash
+ocx add thinking-skills/thinking-pre-mortem
+```
+
+Or install all 28 skills at once:
+
+```bash
+ocx add thinking-skills/all
+```
+
 ### Copy from a clone
 
 ```bash

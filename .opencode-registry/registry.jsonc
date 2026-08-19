@@ -1,0 +1,267 @@
+{
+  "$schema": "https://ocx.kdco.dev/schemas/v2/registry.json",
+  "name": "Claude Code Thinking Skills",
+  "version": "1.0.0",
+  "author": "TJ Boudreaux",
+  "components": [
+    {
+      "name": "all",
+      "type": "bundle",
+      "description": "Install all 28 thinking skills for structured reasoning",
+      "dependencies": [
+        "thinking-bounded-rationality",
+        "thinking-circle-of-competence",
+        "thinking-cynefin",
+        "thinking-effectuation",
+        "thinking-first-principles",
+        "thinking-five-whys-plus",
+        "thinking-jobs-to-be-done",
+        "thinking-kepner-tregoe",
+        "thinking-lindy-effect",
+        "thinking-map-territory",
+        "thinking-margin-of-safety",
+        "thinking-model-combination",
+        "thinking-model-router",
+        "thinking-ooda",
+        "thinking-opportunity-cost",
+        "thinking-pre-mortem",
+        "thinking-probabilistic",
+        "thinking-red-team",
+        "thinking-reversibility",
+        "thinking-scientific-method",
+        "thinking-second-order",
+        "thinking-socratic",
+        "thinking-steel-manning",
+        "thinking-systems",
+        "thinking-theory-of-constraints",
+        "thinking-thought-experiment",
+        "thinking-triz",
+        "thinking-via-negativa"
+      ]
+    },
+    {
+      "name": "thinking-bounded-rationality",
+      "type": "skill",
+      "description": "Use when search or investigation could run forever. Set an explicit good-enough threshold first, then stop at the first option that clears it.",
+      "files": [
+        "skills/thinking-bounded-rationality/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-circle-of-competence",
+      "type": "skill",
+      "description": "Use when a specific claim may lack grounding. Check evidence boundary, size wrongness cost, then answer, fetch, or abstain — never confabulate.",
+      "files": [
+        "skills/thinking-circle-of-competence/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-cynefin",
+      "type": "skill",
+      "description": "When the right response mode is unclear, classify the cause-effect domain first; decompose disorder.",
+      "files": [
+        "skills/thinking-cynefin/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-effectuation",
+      "type": "skill",
+      "description": "Under genuine uncertainty with no reliable forecast, inventory means, cap downside at affordable loss, act for commitments, and let goals emerge from controllable moves.",
+      "files": [
+        "skills/thinking-effectuation/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-first-principles",
+      "type": "skill",
+      "description": "When a constraint is treated as fixed, separate physics from convention, keep only independently supported primitives, and rebuild the simplest solution that satisfies real constraints.",
+      "files": [
+        "skills/thinking-first-principles/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-five-whys-plus",
+      "type": "skill",
+      "description": "When a fault is localized and the proximate cause is known but the systemic root is not, chain evidence-linked whys with a counterfactual stop and a countermeasure.",
+      "files": [
+        "skills/thinking-five-whys-plus/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-jobs-to-be-done",
+      "type": "skill",
+      "description": "Deciding what to build or why adoption fails. Recover the progress users hire a solution for under a circumstance, then rank by outcome and competing workarounds.",
+      "files": [
+        "skills/thinking-jobs-to-be-done/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-kepner-tregoe",
+      "type": "skill",
+      "description": "Use when a selective defect needs IS/IS-NOT difference analysis or a consequential option choice needs must/want weighting and adverse-consequence comparison.",
+      "files": [
+        "skills/thinking-kepner-tregoe/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-lindy-effect",
+      "type": "skill",
+      "description": "Use when longevity of a non-perishable option matters. Treat survival duration as a remaining-life prior, then check domain drift before favoring the proven.",
+      "files": [
+        "skills/thinking-lindy-effect/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-map-territory",
+      "type": "skill",
+      "description": "When a claim, doc, test, metric, or assumption conflicts with observed behavior, stop theorizing from the map and verify the live code or data; let territory overrule.",
+      "files": [
+        "skills/thinking-map-territory/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-margin-of-safety",
+      "type": "skill",
+      "description": "When provisioning, setting a limit, or committing an estimate under uncertainty, size a buffer to residual error and the cost of breach—not to the optimistic edge.",
+      "files": [
+        "skills/thinking-margin-of-safety/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-model-combination",
+      "type": "skill",
+      "description": "When one mental model leaves a material blind spot on a multi-domain or high-stakes problem, sequence complementary models with named roles and a conflict rule.",
+      "files": [
+        "skills/thinking-model-combination/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-model-router",
+      "type": "skill",
+      "description": "When unsure which thinking skill fits, map domain and problem type, then return NONE or one primary skill by default (at most three complementary).",
+      "files": [
+        "skills/thinking-model-router/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-ooda",
+      "type": "skill",
+      "description": "Use under time pressure when the situation is still changing and you must act before certainty — cycle Observe→Orient→Decide→Act on ~70% confidence, then re-observe.",
+      "files": [
+        "skills/thinking-ooda/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-opportunity-cost",
+      "type": "skill",
+      "description": "Before committing scarce time, people, or money, name the best forgone use of those resources and the value delta of the chosen path versus that alternative.",
+      "files": [
+        "skills/thinking-opportunity-cost/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-pre-mortem",
+      "type": "skill",
+      "description": "Before committing to a plan or launch, assume it already failed and reason backward through concrete causes — convert failure paths into mitigations, gates, and stop checks.",
+      "files": [
+        "skills/thinking-pre-mortem/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-probabilistic",
+      "type": "skill",
+      "description": "Use when forecasting, estimating, or sizing risk — anchor on base rates, give ranges, update prior→likelihood→posterior on evidence, and factor unmeasured quantities into order-of-magnitude bounds.",
+      "files": [
+        "skills/thinking-probabilistic/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-red-team",
+      "type": "skill",
+      "description": "For authorized security review of code, auth, or APIs you control, model the attacker, map the attack surface, and report only findings with a reproducible exploit path and verified mitigation.",
+      "files": [
+        "skills/thinking-red-team/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-reversibility",
+      "type": "skill",
+      "description": "Before heavy deliberation, classify the decision as cheap or costly to undo; decide two-way doors fast and stage one-way doors to preserve options.",
+      "files": [
+        "skills/thinking-reversibility/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-scientific-method",
+      "type": "skill",
+      "description": "When a symptom has several plausible causes, rank falsifiable hypotheses and run the cheapest discriminating observation first; prefer least-assumptive survivors only after evidence fit.",
+      "files": [
+        "skills/thinking-scientific-method/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-second-order",
+      "type": "skill",
+      "description": "When a change has effects past the immediate fix—incentives, scale, feedback—trace consequence chains with timing and probability before committing.",
+      "files": [
+        "skills/thinking-second-order/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-socratic",
+      "type": "skill",
+      "description": "When a request is vague, assumption-laden, or \"obvious,\" ask the few load-bearing questions that expose hidden requirements before building or committing.",
+      "files": [
+        "skills/thinking-socratic/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-steel-manning",
+      "type": "skill",
+      "description": "Before rejecting a proposal or reflexively agreeing, build the strongest faithful opposing case, state agreement conditions, then update or reaffirm.",
+      "files": [
+        "skills/thinking-steel-manning/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-systems",
+      "type": "skill",
+      "description": "When behavior is emergent across components—fixes elsewhere break, loops/delays dominate—map boundary, stocks/flows, feedback, archetypes, then rank leverage.",
+      "files": [
+        "skills/thinking-systems/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-theory-of-constraints",
+      "type": "skill",
+      "description": "When throughput or latency is pipeline-limited, identify the single binding constraint and exploit, subordinate, elevate, then recheck—ignore non-constraints.",
+      "files": [
+        "skills/thinking-theory-of-constraints/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-thought-experiment",
+      "type": "skill",
+      "description": "When a real test is too rare, large, or irreversible, run a controlled counterfactual: isolate one variable, fix conditions, trace the mechanistic chain, and bound what the result implies.",
+      "files": [
+        "skills/thinking-thought-experiment/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-triz",
+      "type": "skill",
+      "description": "When two design requirements seem mutually exclusive, name the contradiction, separate conflicting states, then invent a concrete no-compromise resolution.",
+      "files": [
+        "skills/thinking-triz/SKILL.md"
+      ]
+    },
+    {
+      "name": "thinking-via-negativa",
+      "type": "skill",
+      "description": "Use when the reflex is to add a feature, layer, or process. Prefer removing harmful or nonessential elements first, with an irreversibility guard before deletion.",
+      "files": [
+        "skills/thinking-via-negativa/SKILL.md"
+      ]
+    }
+  ]
+}

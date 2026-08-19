@@ -55,6 +55,8 @@ function listUnexpectedSkillFiles(repoRoot = REPO_ROOT) {
     'backups',
     'evals/checkouts',
     'node_modules',
+    '.opencode-registry/dist',
+    '_site',
   ]);
   const unexpected = [];
 
