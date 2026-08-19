@@ -53,10 +53,10 @@ jobs:
             <head>
               <meta charset="utf-8">
               <title>Claude Code Thinking Skills - OCX Registry</title>
-              <meta http-equiv="refresh" content="0; url=https://github.com/tjboudreaux/cc-thinking-skills">
+              <meta http-equiv="refresh" content="0; url=${{ github.server_url }}/${{ github.repository }}">
             </head>
             <body>
-              <p>Redirecting to <a href="https://github.com/tjboudreaux/cc-thinking-skills">Claude Code Thinking Skills</a>...</p>
+              <p>Redirecting to <a href="${{ github.server_url }}/${{ github.repository }}">Claude Code Thinking Skills</a>...</p>
             </body>
           </html>
           EOF
