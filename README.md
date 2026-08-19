@@ -39,10 +39,16 @@ npx skills add tjboudreaux/cc-thinking-skills --all
 
 ### OpenCode (via OCX)
 
+Initialize OCX (one-time global setup, or run `ocx init` inside a project):
+
+```bash
+ocx init --global
+```
+
 Add the registry:
 
 ```bash
-ocx registry add https://tjboudreaux.github.io/cc-thinking-skills/registry --name thinking-skills
+ocx registry add https://tjboudreaux.github.io/cc-thinking-skills/registry --name thinking-skills --global
 ```
 
 Install a specific skill:

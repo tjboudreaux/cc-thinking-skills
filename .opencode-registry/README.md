@@ -4,12 +4,18 @@ This directory defines the [OCX](https://ocx.kdco.dev) component registry for Cl
 
 ## Quick Start
 
-### 1. Add the Registry
-
-Add this registry to your OpenCode configuration (project-level or global with `-g`):
+### 0. Initialize OCX (one-time global setup, or run `ocx init` inside a project)
 
 ```bash
-ocx registry add https://tjboudreaux.github.io/cc-thinking-skills/registry --name thinking-skills
+ocx init --global
+```
+
+### 1. Add the Registry
+
+Add this registry to your OpenCode configuration (global with `--global` or project-level):
+
+```bash
+ocx registry add https://tjboudreaux.github.io/cc-thinking-skills/registry --name thinking-skills --global
 ```
 
 ### 2. Install Skills
