@@ -36,7 +36,10 @@ The old correctness, routing-data, binary-decision, abstention, numeric,
 behavioral, rubric, SWE, workflow, shell-batch, and experiment-specific runners
 are historical producers only. Current studies use the generic objective or
 pairwise engine. Historical manifests keep the retired command names and hashes
-for provenance.
+for provenance. Tool-localization v1 also preserves its pre-cutover
+`skills/thinking-scientific-method/SKILL.md` path. Run that study from its
+historical revision. Create a new versioned manifest and runner for the current
+`plugin/skills/` layout instead of changing its frozen pins.
 
 ## Other gates
 

@@ -207,7 +207,7 @@ test('absorbed mechanisms remain executable in destination skill contracts', () 
   ];
   for (const [skillId, assertions] of contracts) {
     const content = fs.readFileSync(
-      path.join(__dirname, '..', '..', 'skills', `thinking-${skillId}`, 'SKILL.md'),
+      path.join(__dirname, '..', '..', 'plugin', 'skills', `thinking-${skillId}`, 'SKILL.md'),
       'utf8'
     );
     for (const assertion of assertions) {

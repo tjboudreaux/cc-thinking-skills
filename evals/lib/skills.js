@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 
 const REPO_ROOT = path.join(__dirname, '..', '..');
-const SKILLS_DIR = path.join(REPO_ROOT, 'skills');
+const SKILLS_DIR = path.join(REPO_ROOT, 'plugin', 'skills');
 
 function listSkillDirs() {
   return fs.readdirSync(SKILLS_DIR)

@@ -28,7 +28,7 @@ const SOLVER_EFFORT = process.env.SOLVER_EFFORT || 'medium';
 const ROOT = path.join(__dirname, '..');
 const DATA = path.join(ROOT, 'evals', 'datasets', 'behavioral');
 const RUBRIC = fs.readFileSync(path.join(ROOT, 'evals', 'rubrics', 'behavioral-pairwise.md'), 'utf8');
-const skillMd = s => fs.readFileSync(path.join(ROOT, 'skills', 'thinking-' + s.replace(/^thinking-/, ''), 'SKILL.md'), 'utf8');
+const skillMd = s => fs.readFileSync(path.join(ROOT, 'plugin', 'skills', 'thinking-' + s.replace(/^thinking-/, ''), 'SKILL.md'), 'utf8');
 const judgePrompt = (p, a, b) => `${RUBRIC}\n\n=== PROBLEM ===\n${p.prompt}\n\n=== RESPONSE A ===\n${a}\n\n=== RESPONSE B ===\n${b}\n\n=== END ===\nReturn ONLY the JSON verdict.`;
 
 async function main() {

@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Mental models and thinking skills for Claude Code, with eval-informed guidance for better reasoning",
-    "version": "1.0.0"
+    "version": "1.0.1"
   },
   "plugins": [
     {
       "name": "thinking-skills",
-      "source": "./",
+      "source": "./plugin",
       "description": "28 eval-informed thinking skills for Claude Code, including first-principles, probabilistic reasoning, systems thinking, TRIZ, OODA, pre-mortem analysis, and more",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "category": "productivity",
       "tags": [
         "thinking",

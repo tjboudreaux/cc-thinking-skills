@@ -37,7 +37,13 @@ const DATASET_PATH = resolveDatasetPath(
 const RESULTS_DIR = process.env.SCI_RESULTS_DIR
   ? path.resolve(process.env.SCI_RESULTS_DIR)
   : path.join(__dirname, 'results', 'local', 'scientific-method-vnext');
-const CURRENT_SKILL_PATH = path.join(REPO, 'skills', 'thinking-scientific-method', 'SKILL.md');
+const CURRENT_SKILL_PATH = path.join(
+  REPO,
+  'plugin',
+  'skills',
+  'thinking-scientific-method',
+  'SKILL.md',
+);
 const SPLITS_PATH = process.env.SCI_SPLITS_PATH
   ? path.resolve(process.env.SCI_SPLITS_PATH)
   : path.join(STUDY_DIR, 'splits.json');

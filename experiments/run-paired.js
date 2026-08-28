@@ -13,7 +13,7 @@
  * Reports the modified-vs-original win-rate with a CI + sign-test p-value, so the
  * lift is a real (if small-N) significance statement, not a stored-baseline delta.
  *
- * Env: ORIG_DIR (skills dir for originals), MOD_DIR (modified skills dir),
+ * Env: ORIG_DIR (original repository root), MOD_DIR (modified repository root),
  *      SOLVER_MODEL, JUDGES, CONC, OUT (json path). Args: skill short-names.
  */
 
@@ -34,7 +34,7 @@ const OUT = process.env.OUT;
 const DATA_DIR = path.join(__dirname, '..', 'evals', 'datasets', 'behavioral');
 const RUBRIC = fs.readFileSync(path.join(__dirname, '..', 'evals', 'rubrics', 'behavioral-pairwise.md'), 'utf8');
 
-function skillMd(dir, short) { return fs.readFileSync(path.join(dir, 'skills', 'thinking-' + short, 'SKILL.md'), 'utf8'); }
+function skillMd(dir, short) { return fs.readFileSync(path.join(dir, 'plugin', 'skills', 'thinking-' + short, 'SKILL.md'), 'utf8'); }
 function judgePrompt(problem, a, b) { return `${RUBRIC}\n\n=== PROBLEM ===\n${problem.prompt}\n\n=== RESPONSE A ===\n${a}\n\n=== RESPONSE B ===\n${b}\n\n=== END ===\nReturn ONLY the JSON verdict.`; }
 
 async function runSkill(short) {

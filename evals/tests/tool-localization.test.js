@@ -167,7 +167,10 @@ test('createKeyedSerialExecutor serializes one repository without blocking anoth
 
 test('tool localization variants each add exactly one isolated mechanism', () => {
   const root = path.resolve(__dirname, '..', '..');
-  const current = fs.readFileSync(path.join(root, 'skills/thinking-scientific-method/SKILL.md'), 'utf8');
+  const current = fs.readFileSync(
+    path.join(root, 'plugin/skills/thinking-scientific-method/SKILL.md'),
+    'utf8',
+  );
   const clue = fs.readFileSync(path.join(
     root,
     'evals/studies/scientific-method-vnext/variants/candidate-clue-first/CANDIDATE.md',

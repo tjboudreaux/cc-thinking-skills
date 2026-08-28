@@ -19,7 +19,7 @@ const path = require('path');
 const { isDeepStrictEqual } = require('util');
 
 const REPO_ROOT = path.join(__dirname, '..');
-const SKILLS_DIR = path.join(REPO_ROOT, 'skills');
+const SKILLS_DIR = path.join(REPO_ROOT, 'plugin', 'skills');
 
 let loadRegistry;
 let validateRegistry;
@@ -70,7 +70,7 @@ function listUnexpectedSkillFiles(repoRoot = REPO_ROOT) {
         continue;
       }
       if (!entry.isFile() || entry.name !== 'SKILL.md') continue;
-      if (!/^skills\/thinking-[^/]+\/SKILL\.md$/.test(relativePath)) {
+      if (!/^plugin\/skills\/thinking-[^/]+\/SKILL\.md$/.test(relativePath)) {
         unexpected.push(relativePath);
       }
     }
@@ -81,11 +81,17 @@ function listUnexpectedSkillFiles(repoRoot = REPO_ROOT) {
 }
 
 function validatePluginManifests(repoRoot = REPO_ROOT) {
-  const manifestPaths = [
-    '.claude-plugin/plugin.json',
-    '.github/plugin/plugin.json',
+  const manifestSpecs = [
+    {
+      relativePath: 'plugin/.claude-plugin/plugin.json',
+      omitSkills: true,
+    },
+    {
+      relativePath: '.github/plugin/plugin.json',
+      skills: ['plugin/skills/'],
+    },
   ];
-  const fields = [
+  const sharedFields = [
     'name',
     'description',
     'version',
@@ -94,35 +100,74 @@ function validatePluginManifests(repoRoot = REPO_ROOT) {
     'repository',
     'license',
     'keywords',
-    'skills',
   ];
+  const marketplacePath = '.claude-plugin/marketplace.json';
   const errors = [];
   const manifests = [];
 
-  for (const relativePath of manifestPaths) {
-    const absolutePath = path.join(repoRoot, relativePath);
+  for (const spec of manifestSpecs) {
+    const absolutePath = path.join(repoRoot, spec.relativePath);
     if (!fs.existsSync(absolutePath)) {
-      errors.push(`manifest missing: ${relativePath}`);
+      errors.push(`manifest missing: ${spec.relativePath}`);
       continue;
     }
     try {
       const manifest = JSON.parse(fs.readFileSync(absolutePath, 'utf8'));
-      manifests.push({ relativePath, manifest });
-      if (!isDeepStrictEqual(manifest.skills, ['skills/'])) {
-        errors.push(`manifest skills must equal ["skills/"]: ${relativePath}`);
+      manifests.push({ relativePath: spec.relativePath, manifest });
+      if (spec.omitSkills && Object.prototype.hasOwnProperty.call(manifest, 'skills')) {
+        errors.push(`manifest skills must be omitted: ${spec.relativePath}`);
+      } else if (spec.skills && !isDeepStrictEqual(manifest.skills, spec.skills)) {
+        errors.push(`manifest skills must equal ${JSON.stringify(spec.skills)}: ${spec.relativePath}`);
       }
     } catch (error) {
-      errors.push(`manifest invalid JSON: ${relativePath}: ${error.message}`);
+      errors.push(`manifest invalid JSON: ${spec.relativePath}: ${error.message}`);
     }
   }
 
-  if (manifests.length === manifestPaths.length) {
+  if (manifests.length === manifestSpecs.length) {
     const [first, second] = manifests;
-    for (const field of fields) {
+    for (const field of sharedFields) {
       if (!isDeepStrictEqual(first.manifest[field], second.manifest[field])) {
         errors.push(`manifest field mismatch: ${field}`);
       }
     }
+  }
+
+  const marketplaceAbsolutePath = path.join(repoRoot, marketplacePath);
+  if (!fs.existsSync(marketplaceAbsolutePath)) {
+    errors.push(`manifest missing: ${marketplacePath}`);
+    return errors;
+  }
+
+  let marketplace;
+  try {
+    marketplace = JSON.parse(fs.readFileSync(marketplaceAbsolutePath, 'utf8'));
+  } catch (error) {
+    errors.push(`manifest invalid JSON: ${marketplacePath}: ${error.message}`);
+    return errors;
+  }
+
+  if (!Array.isArray(marketplace.plugins) || marketplace.plugins.length !== 1) {
+    errors.push('marketplace must declare exactly one plugin');
+    return errors;
+  }
+
+  const claudeManifest = manifests.find(({ relativePath }) =>
+    relativePath === manifestSpecs[0].relativePath)?.manifest;
+  if (!claudeManifest) return errors;
+
+  const [plugin] = marketplace.plugins;
+  if (plugin.source !== './plugin') {
+    errors.push('marketplace plugin source must equal "./plugin"');
+  }
+  if (plugin.name !== claudeManifest.name) {
+    errors.push('marketplace plugin name must match Claude plugin manifest');
+  }
+  if (plugin.version !== claudeManifest.version) {
+    errors.push('marketplace plugin version must match Claude plugin manifest');
+  }
+  if (marketplace.metadata?.version !== claudeManifest.version) {
+    errors.push('marketplace metadata version must match Claude plugin manifest');
   }
 
   return errors;
@@ -389,7 +434,7 @@ function loadCatalogExpectations(registryPath) {
  */
 function validateAllSkills(opts = {}) {
   const repoRoot = opts.repoRoot || REPO_ROOT;
-  const skillsDir = opts.skillsDir || path.join(repoRoot, 'skills');
+  const skillsDir = opts.skillsDir || path.join(repoRoot, 'plugin', 'skills');
   const catalog = loadCatalogExpectations(opts.registryPath);
   const dirs = listSkillDirs(skillsDir);
   const results = [];

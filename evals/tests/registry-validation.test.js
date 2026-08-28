@@ -155,7 +155,7 @@ body
   });
 
   const thoughtExperiment = fs.readFileSync(
-    path.join(REPO_ROOT, 'skills', 'thinking-thought-experiment', 'SKILL.md'),
+    path.join(REPO_ROOT, 'plugin', 'skills', 'thinking-thought-experiment', 'SKILL.md'),
     'utf8',
   );
   const thoughtParsed = parseFrontmatter(thoughtExperiment);
@@ -199,10 +199,10 @@ test('validateSkillContent surfaces parser errors in YAML Frontmatter detail', (
 });
 
 test('router emits invocable thinking-skills IDs; NONE means no invocation', () => {
-  const routerPath = path.join(REPO_ROOT, 'skills', 'thinking-model-router', 'SKILL.md');
+  const routerPath = path.join(REPO_ROOT, 'plugin', 'skills', 'thinking-model-router', 'SKILL.md');
   const content = fs.readFileSync(routerPath, 'utf8');
   const plugin = JSON.parse(
-    fs.readFileSync(path.join(REPO_ROOT, '.claude-plugin', 'plugin.json'), 'utf8'),
+    fs.readFileSync(path.join(REPO_ROOT, 'plugin', '.claude-plugin', 'plugin.json'), 'utf8'),
   );
 
   // Positive: the invocation rule's exact ID is the plugin namespace plus a real
@@ -296,7 +296,7 @@ test('catalog boundary rejects stray SKILL.md files but ignores local trees and 
   assert.deepEqual(listUnexpectedSkillFiles(repoRoot), ['evals/study/SKILL.md']);
   const report = validateAllSkills({
     repoRoot,
-    skillsDir: path.join(REPO_ROOT, 'skills'),
+    skillsDir: path.join(REPO_ROOT, 'plugin', 'skills'),
   });
   assert.ok(report.catalog_errors.includes('unexpected SKILL.md: evals/study/SKILL.md'));
   assert.throws(
@@ -307,17 +307,15 @@ test('catalog boundary rejects stray SKILL.md files but ignores local trees and 
 
 function createManifestRepo() {
   const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'plugin-manifests-'));
-  const manifest = fs.readFileSync(
-    path.join(REPO_ROOT, '.claude-plugin', 'plugin.json'),
-    'utf8',
-  );
   for (const relativePath of [
-    '.claude-plugin/plugin.json',
+    'plugin/.claude-plugin/plugin.json',
     '.github/plugin/plugin.json',
+    '.claude-plugin/marketplace.json',
   ]) {
+    const sourcePath = path.join(REPO_ROOT, relativePath);
     const absolutePath = path.join(repoRoot, relativePath);
     fs.mkdirSync(path.dirname(absolutePath), { recursive: true });
-    fs.writeFileSync(absolutePath, manifest);
+    fs.copyFileSync(sourcePath, absolutePath);
   }
   return repoRoot;
 }
@@ -352,15 +350,39 @@ test('plugin manifest validation reports malformed JSON', () => {
   );
 });
 
-test('plugin manifest validation rejects a noncanonical skills path', () => {
+test('plugin manifest validation rejects noncanonical platform skill paths', () => {
   const repoRoot = createManifestRepo();
+  const claudePath = path.join(repoRoot, 'plugin', '.claude-plugin', 'plugin.json');
+  const claudeManifest = JSON.parse(fs.readFileSync(claudePath, 'utf8'));
+  claudeManifest.skills = ['./skills'];
+  fs.writeFileSync(claudePath, `${JSON.stringify(claudeManifest, null, 2)}\n`);
+
   const githubPath = path.join(repoRoot, '.github', 'plugin', 'plugin.json');
   const githubManifest = JSON.parse(fs.readFileSync(githubPath, 'utf8'));
-  githubManifest.skills = ['./skills'];
+  githubManifest.skills = ['skills/'];
   fs.writeFileSync(githubPath, `${JSON.stringify(githubManifest, null, 2)}\n`);
+
   assert.deepEqual(validatePluginManifests(repoRoot), [
-    'manifest skills must equal ["skills/"]: .github/plugin/plugin.json',
-    'manifest field mismatch: skills',
+    'manifest skills must be omitted: plugin/.claude-plugin/plugin.json',
+    'manifest skills must equal ["plugin/skills/"]: .github/plugin/plugin.json',
+  ]);
+});
+
+test('plugin manifest validation protects the marketplace package boundary', () => {
+  const repoRoot = createManifestRepo();
+  const marketplacePath = path.join(repoRoot, '.claude-plugin', 'marketplace.json');
+  const marketplace = JSON.parse(fs.readFileSync(marketplacePath, 'utf8'));
+  marketplace.plugins[0].source = './';
+  marketplace.plugins[0].name = 'wrong-name';
+  marketplace.plugins[0].version = '9.9.9';
+  marketplace.metadata.version = '9.9.9';
+  fs.writeFileSync(marketplacePath, `${JSON.stringify(marketplace, null, 2)}\n`);
+
+  assert.deepEqual(validatePluginManifests(repoRoot), [
+    'marketplace plugin source must equal "./plugin"',
+    'marketplace plugin name must match Claude plugin manifest',
+    'marketplace plugin version must match Claude plugin manifest',
+    'marketplace metadata version must match Claude plugin manifest',
   ]);
 });
 

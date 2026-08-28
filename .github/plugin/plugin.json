@@ -1,7 +1,7 @@
 {
   "name": "thinking-skills",
   "description": "28 eval-informed mental models and critical-thinking skills for Claude Code, GitHub Copilot, Codex, Cursor, and other Agent Skills-compatible tools",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "TJ Boudreaux",
     "url": "https://github.com/tjboudreaux"
@@ -20,5 +20,5 @@
     "strategic-thinking",
     "problem-solving"
   ],
-  "skills": ["skills/"]
+  "skills": ["plugin/skills/"]
 }
