@@ -20,5 +20,5 @@
     "strategic-thinking",
     "problem-solving"
   ],
-  "skills": ["skills/"]
+  "skills": ["./skills/"]
 }
